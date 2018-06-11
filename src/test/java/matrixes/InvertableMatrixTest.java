@@ -20,13 +20,13 @@ public class InvertableMatrixTest {
 
 
         System.out.println("\nThe input matrix");
-       // iInvertableMatrix.outMatrix();
         System.out.println(iInvertableMatrix);
-        System.out.println("\nObratnaya matrica:");
 
+        System.out.println("\nObratnaya matrica:");
         Assert.assertEquals(iInvertableMatrix.getCell(0,0), 1, 0.001);
         Assert.assertTrue(iInvertableMatrix.calculateMatrixInverse());
-        Assert.assertEquals(iInvertableMatrix.getCell(0,0), -0.5, 0.001);
+        System.out.println(iInvertableMatrix);
+        Assert.assertEquals(iInvertableMatrix.getCellNew(0,0), -0.5, 0.001);
     }
 
 }

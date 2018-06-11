@@ -104,6 +104,19 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++)
+                sb.append(getCell(i, j)).append("\t");
+            sb.append("\t|\t\t");
+            for (int j = size; j < size * 2; j++)
+                sb.append(getCell(i, j)).append("\t");
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 //    @Override
 //    public void outMatrix() {
 //        for (int i = 0; i < size; i++) {
