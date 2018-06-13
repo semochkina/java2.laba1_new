@@ -4,40 +4,36 @@ import interfaces.IInvertableMatrix;
 
 public class InvertableMatrix extends Matrix implements IInvertableMatrix {
 
-    private int size;
-    private double[] matrix;
-
-    public InvertableMatrix(int size) {
+    public InvertableMatrix(int size) throws MatrixOutOfBoundException {
         super(size);
-        this.size = size;
-        matrix = new double[size*size*2];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size*2; j++) {
-                setCell(i, j, (i == j - size) ? 1. : 0.);
-            }
+        for (int i = 0; i < size*size; i++) {
+            super.setCell(i,i,1.);
         }
     }
 
-    @Override
-    public double getCell(int x, int y) {
-        return matrix[x * size * 2 + y];
-    }
-
-    @Override
-    public double getCellNew(int x, int y) {
-        return matrix[x * size * 2 + y + size];
-    }
-
-    @Override
-    public void setCell(int x, int y, double value) {
-        if (-0.0000000001 < value && value < 0.0000000001) {
-            value = 0.;
+    public InvertableMatrix (Matrix matrix) throws MyMatrixException {
+        super(matrix);
+        if (Math.abs(matrix.getDeterminant())<1e-7) {
+            throw new MyMatrixException("det == 0");
         }
-        matrix[x * size * 2 + y] = value;
+    }
+//    private double getCellNew(int x, int y) {
+//        return matrix[x * size * 2 + y + size];
+//    }
+
+    @Override
+    public void setCell(int x, int y, double value) throws MatrixOutOfBoundException {
+        double temp = getCell(x,y);
+        super.setCell(x,y,value);
+        if (Math.abs(getDeterminant())<1e-6) {
+            super.setCell(x, y, temp);
+        } else {
+            super.setCell(x, y, value);
+        }
     }
 
     // izmenyaem soderjimoe v stroke (iz stroki X vychislyaetsya stroka Y * na soderjimoe yacheyki [X, Y])
-    private void subtractionRow(int x, int y){
+    private void subtractionRow(int x, int y) throws MatrixOutOfBoundException {
         int size = getSize();
         if (getCell(x, y) != 0) {
             double kf = getCell(x, y) * -1;
@@ -51,7 +47,7 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
 
 
     // perestavlyaem stroki matrica
-    private void perestavlyaemStroki(int nLine1, int nLine2){
+    private void perestavlyaemStroki(int nLine1, int nLine2) throws MatrixOutOfBoundException {
         for (int i = 0; i < getSize() - 1; i++) {
             double currValue = getCell(nLine1, i);
             setCell(nLine1, i, getCell(nLine2, i));
@@ -60,15 +56,18 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
     }
 
     @Override
-    public boolean calculateMatrixInverse() {
+    public InvertableMatrix calculateMatrixInverse() throws MyMatrixException {
+        InvertableMatrix my = new InvertableMatrix(this);
+        InvertableMatrix unit = new InvertableMatrix(getSize());
         // privodim k edinichnoy matricy
-        for (int i = 0; i < getSize(); i++) {
-            if (getCell(i, i) == 0) {
+        int size = getSize();
+        for (int i = 0; i < size; i++) {
+            if (my.getCell(i, i) == 0) {
                 // nulevoy element na glavnoy diagonali
                 // ishem druguyu stroku s ne nulevym znacheniem v dannom stolbce
                 int n = 0;
-                for (int j = i + 1; j < getSize(); j++) {
-                    if (getCell(j, i) != 0) {
+                for (int j = i + 1; j < size; j++) {
+                    if (my.getCell(j, i) != 0) {
                         n = j;
                         break;
                     }
@@ -76,10 +75,11 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
                 if (n == 0) {
                     // net stolbca bez 0, na glavnoy diagonali budet 0, opredelitel' == 0
 //				cout << "0 in row " << i << " in all colums, determinant == 0" << endl;
-                    return false;
+                    throw new MyMatrixException("det == 0");
                 }
                 // perestavlyaem stroki
-                perestavlyaemStroki(i, n);
+                my.perestavlyaemStroki(i, n);
+                unit.perestavlyaemStroki(i,n);
                 System.out.println("0 in diagonal, change " + (i + 1) + " and " + (n + 1) + " rows");
 //                outMatrix();
             }
@@ -101,19 +101,24 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
                 subtractionRow(j, i);
             }
         }
-        return true;
+        return unit;
     }
 
     @Override
     public String toString() {
+        int size = getSize();
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++)
-                sb.append(getCell(i, j)).append("\t");
-            sb.append("\t|\t\t");
-            for (int j = size; j < size * 2; j++)
-                sb.append(getCell(i, j)).append("\t");
-            sb.append("\n");
+        try {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++)
+                    sb.append(getCell(i, j)).append("\t");
+                sb.append("\t|\t\t");
+                for (int j = size; j < size * 2; j++)
+                    sb.append(getCell(i, j)).append("\t");
+                sb.append("\n");
+            }
+        } catch (MatrixOutOfBoundException e) {
+            e.printStackTrace();
         }
         return sb.toString();
     }

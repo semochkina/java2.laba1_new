@@ -13,14 +13,26 @@ public class Matrix implements IMatrix {
     // Матрица
     private double[] matrix;
 
-    public Matrix(int size) {
+    public Matrix(int size) throws MatrixOutOfBoundException {
         this.size = size;
         matrix = new double[size*size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                matrix[i] = 0;
+                setCell(i,j, 0.0);
             }
         }
+    }
+
+    public Matrix(double[] matrix) {
+        this.size = (int) Math.sqrt(matrix.length);
+        this.matrix = new double[size*size];
+        for (int i = 0; i < size*size; i++) {
+           this.matrix[i] = matrix[i];
+        }
+    }
+
+    public Matrix(Matrix M) {
+        this(M.matrix);
     }
 
     public int getSize() {
@@ -28,18 +40,24 @@ public class Matrix implements IMatrix {
     }
 
     @Override
-    public double getCell(int x, int y) {
+    public double getCell(int x, int y) throws MatrixOutOfBoundException {
+        if (x < 0 || y < 0 || x>=size || y>=size) {
+            throw new MatrixOutOfBoundException();
+        }
         return matrix[x * size + y];
     }
 
     @Override
-    public void setCell(int x, int y, double value) {
+    public void setCell(int x, int y, double value) throws MatrixOutOfBoundException {
+        if (x < 0 || y < 0 || x>=size || y>=size) {
+            throw new MatrixOutOfBoundException();
+        }
         matrix[x * size + y] = value;
         flagCache = false;
     }
 
     // perestavlyaem stroki matrica
-    private void perestavlyaemStroki(int nLine1, int nLine2){
+    private void perestavlyaemStroki(int nLine1, int nLine2) throws MatrixOutOfBoundException {
         for (int i = 0; i < size - 1; i++) {
             double currValue = getCell(nLine1, i);
             setCell(nLine1, i, getCell(nLine2, i));
@@ -54,58 +72,68 @@ public class Matrix implements IMatrix {
         }
         // opredelitel'
         double value = 1;
-        // privodim k verhney treugol'noy matricy
-        for (int i = 0; i < size - 1; i++) {
-            if (getCell(i, i) == 0) {
-                // nulevoy element na glavnoy diagonali
-                // ishem druguyu stroku s ne nulevym znacheniem v dannom stolbce
-                int n = 0;
+        try {
+            // privodim k verhney treugol'noy matricy
+            for (int i = 0; i < size - 1; i++) {
+                if (getCell(i, i) == 0) {
+                    // nulevoy element na glavnoy diagonali
+                    // ishem druguyu stroku s ne nulevym znacheniem v dannom stolbce
+                    int n = 0;
+                    for (int j = i + 1; j < size; j++) {
+                        if (getCell(j, i) != 0) {
+                            n = j;
+                            break;
+                        }
+                    }
+                    if (n == 0) {
+                        // net stolbca bez 0, na glavnoe diagonali budet 0, opredelitel' == 0
+                        System.out.println("0 in row " + i + " in all colums, determinant == 0");
+                        return 0;
+                    }
+                    // perestavlyaem stroki
+                    perestavlyaemStroki(i, n);
+                    // pri perestanovki strok menyaetsya znak
+                    value *= -1;
+                    System.out.println("Change rows  " + i + " -> " + n);
+                }
+                // Operaciya dobavleniya k odnoy iz strok matricy drugoy stroki, umnojennoy na nekotoroe chislo, ne menyaet opredelitel'
+                // k ostal'nym strokam dobavlyaem tekushuyu s takim koefficientom, chtoby v dannoy kolonke byl 0
                 for (int j = i + 1; j < size; j++) {
-                    if (getCell(j, i) != 0) {
-                        n = j;
-                        break;
+                    if (getCell(j, i) == 0) {
+                        System.out.println("don't change row number " + j);
+                    } else {
+                        double kf = getCell(j, i) / getCell(i, i) * -1;
+                        // setCell(j, i, 0);
+                        for (int k = i; k < size; k++)
+                            setCell(j, k, getCell(j, k) + getCell(i, k) * kf);
+                        System.out.println("N row = " + j + ", kf == " + kf);
                     }
                 }
-                if (n == 0) {
-                    // net stolbca bez 0, na glavnoe diagonali budet 0, opredelitel' == 0
-                    System.out.println("0 in row " + i + " in all colums, determinant == 0");
-                    return 0;
-                }
-                // perestavlyaem stroki
-                perestavlyaemStroki(i, n);
-                // pri perestanovki strok menyaetsya znak
-                value *= -1;
-                System.out.println("Change rows  " + i + " -> " + n);
+                value *= getCell(i, i);
             }
-            // Operaciya dobavleniya k odnoy iz strok matricy drugoy stroki, umnojennoy na nekotoroe chislo, ne menyaet opredelitel'
-            // k ostal'nym strokam dobavlyaem tekushuyu s takim koefficientom, chtoby v dannoy kolonke byl 0
-            for (int j = i + 1; j < size; j++) {
-                if (getCell(j, i) == 0) {
-                    System.out.println("don't change row number " + j);
-                } else {
-                    double kf = getCell(j, i) / getCell(i, i) * -1;
-                    // setCell(j, i, 0);
-                    for (int k = i; k < size; k++)
-                        setCell(j, k, getCell(j, k) + getCell(i, k) * kf);
-                    System.out.println("N row = " + j + ", kf == " + kf);
-                }
-            }
-            value *= getCell(i, i);
+            value *= getCell(size - 1, size - 1);
+            memDeterminant = value;
+            flagCache = true;
+        }catch(MyMatrixException e) {
+            System.out.println("Smth goes wrong: " + e.getMessage());
+            memDeterminant = 0.0;
+            flagCache = false;
         }
-        value *= getCell(size - 1, size - 1);
-        memDeterminant = value;
-        flagCache = true;
         return value;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        try {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 sb.append(this.getCell(i, j)).append("\t");
             }
             sb.append("\n");
+        }
+        } catch (MatrixOutOfBoundException e) {
+            e.printStackTrace();
         }
         return sb.toString();
     }
