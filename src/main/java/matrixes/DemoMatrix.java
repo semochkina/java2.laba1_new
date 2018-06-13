@@ -50,11 +50,11 @@ public class DemoMatrix extends Matrix {
 //    }
 
 
-    public DemoMatrix(int size) {
+    public DemoMatrix(int size) throws MatrixOutOfBoundException {
         super(size);
     }
 
-    public void writeToStream(OutputStream fout) throws IOException {
+    public void writeToStream(OutputStream fout) throws IOException, MatrixOutOfBoundException {
         for (int i = 0; i < getSize(); i++) {
             for (int j = 0; j < getSize(); j++) {
                 fout.write(Double.toString(getCell(i, j)).replace('.', ',').getBytes());
@@ -65,7 +65,7 @@ public class DemoMatrix extends Matrix {
     }
 
 
-    public void readFromStream(InputStream fin) {
+    public void readFromStream(InputStream fin) throws MatrixOutOfBoundException {
         Scanner scanner = new Scanner(fin);
         for (int i = 0; i < getSize(); i++) {
             for (int j = 0; j < getSize(); j++) {
@@ -79,7 +79,7 @@ public class DemoMatrix extends Matrix {
         }
     }
 
-    public double sumAll() {
+    public double sumAll() throws MatrixOutOfBoundException {
         double result = 0;
         for (int i = 0; i < getSize(); i++)
             for (int j = 0; j < getSize(); j++)

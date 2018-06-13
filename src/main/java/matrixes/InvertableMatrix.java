@@ -101,7 +101,7 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
                 subtractionRow(j, i);
             }
         }
-        ?return unit;
+        return unit;
     }
 
     @Override
