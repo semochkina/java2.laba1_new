@@ -24,7 +24,7 @@ public class InvertableMatrixTest {
 
         System.out.println("\nObratnaya matrica:");
         Assert.assertEquals(iInvertableMatrix.getCell(0,0), 1, 0.001);
-        Assert.assertTrue(iInvertableMatrix.calculateMatrixInverse());
+        Assert.assertTrue(iInvertableMatrix.calculateMatrixInverse() != null);
         System.out.println(iInvertableMatrix);
        // Assert.assertEquals(iInvertableMatrix.getCellNew(0,0), -0.5, 0.001);
     }

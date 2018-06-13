@@ -11,7 +11,7 @@ public class DemoMatrixTest {
     private static final double DELTA = 0.0001;
 
     @Test
-    public void test2x2() {
+    public void test2x2() throws MatrixOutOfBoundException {
         DemoMatrix matrix2 = new DemoMatrix(2);
 
 
@@ -58,7 +58,7 @@ public class DemoMatrixTest {
     }
 
     @Test
-    public void test3x3() {
+    public void test3x3() throws MatrixOutOfBoundException {
         DemoMatrix matrix3 = new DemoMatrix(3);
 
         // заполняем матрицу из файла

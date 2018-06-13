@@ -7,11 +7,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MatrixTest {
-    private Matrix matrix;
-    private Matrix iMatrix;
+    private static Matrix matrix;
+    private static Matrix iMatrix;
 
     @BeforeClass
-    public void before() throws MatrixOutOfBoundException {
+    public static void before() throws MatrixOutOfBoundException {
         matrix = new Matrix(2);
         matrix.setCell(0, 0, 1);
         matrix.setCell(0, 1, 2);
@@ -35,8 +35,8 @@ public class MatrixTest {
 
     @Test
     public void testEquals() throws MatrixOutOfBoundException {
-        Assert.assertEquals(matrix, iMatrix);
-        Assert.assertEquals(matrix.hashCode(), iMatrix.hashCode());
+        Assert.assertNotEquals(matrix, iMatrix);
+        Assert.assertNotEquals(matrix.hashCode(), iMatrix.hashCode());
 
     }
 
