@@ -1,5 +1,9 @@
 package interfaces;
 
+import matrixes.InvertableMatrix;
+import matrixes.MatrixOutOfBoundException;
+import matrixes.MyMatrixException;
+
 public interface IInvertableMatrix extends IMatrix {
 
     // poluchit' element s zadannymi indeksami
@@ -9,10 +13,10 @@ public interface IInvertableMatrix extends IMatrix {
 //    void setCell(int x, int y, double value);
 
     // vychislit' obratnuyu matricu, vozvrashaet FALSE esli matrica vyrojdena
-    boolean calculateMatrixInverse();
+    IInvertableMatrix calculateMatrixInverse() throws MyMatrixException;
 
     // vyvodit matricu
 //    void outMatrix();
 
-    double getCellNew(int x, int y);
+//    double getCellNew(int x, int y);
 }
