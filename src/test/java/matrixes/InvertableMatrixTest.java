@@ -10,7 +10,7 @@ public class InvertableMatrixTest {
     @Test
     public void test() throws MyMatrixException {
 
-        IInvertableMatrix iInvertableMatrix = new InvertableMatrix(2);
+        InvertableMatrix iInvertableMatrix = new InvertableMatrix(2);
         Assert.assertEquals(iInvertableMatrix.getCell(1,0), 0, 0.001);
         iInvertableMatrix.setCell(0, 0, 1);
         iInvertableMatrix.setCell(0, 1, 2);
@@ -23,10 +23,10 @@ public class InvertableMatrixTest {
         System.out.println(iInvertableMatrix);
 
         System.out.println("\nObratnaya matrica:");
-        Assert.assertEquals(iInvertableMatrix.getCell(0,0), 1, 0.001);
-        Assert.assertTrue(iInvertableMatrix.calculateMatrixInverse() != null);
-        System.out.println(iInvertableMatrix);
-       // Assert.assertEquals(iInvertableMatrix.getCellNew(0,0), -0.5, 0.001);
+        IInvertableMatrix iInvertableMatrixNew = iInvertableMatrix.calculateMatrixInverse();
+        Assert.assertTrue(iInvertableMatrixNew != null);
+        System.out.println(iInvertableMatrixNew);
+        Assert.assertEquals(iInvertableMatrixNew.getCell(0,0), -0.5, 0.001);
     }
 
 }
