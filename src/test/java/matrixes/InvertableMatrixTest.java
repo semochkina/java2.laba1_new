@@ -5,28 +5,44 @@ import matrixes.InvertableMatrix;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class InvertableMatrixTest {
+
+    @Test
+    public void testDiagonal() throws MyMatrixException {
+
+        InvertableMatrix iInvertableMatrix = new InvertableMatrix(new Matrix(new double[]{7.0,4.0,5.0,3.0}));
+        System.out.println("\nThe input matrix");
+        System.out.println(iInvertableMatrix);
+
+        IInvertableMatrix iInvertableMatrixNew = iInvertableMatrix.calculateMatrixInverse();
+        InvertableMatrix multiply = new InvertableMatrix( iInvertableMatrix.mult(iInvertableMatrixNew));
+        System.out.println("\nObratnaya matrica:");
+        System.out.println(iInvertableMatrixNew);
+        assertEquals(new InvertableMatrix(multiply.getSize()), multiply);
+        System.out.println(multiply);
+    }
 
     @Test
     public void test() throws MyMatrixException {
 
-        IInvertableMatrix iInvertableMatrix = new InvertableMatrix(2);
-        Assert.assertEquals(iInvertableMatrix.getCell(1,0), 0, 0.001);
-        iInvertableMatrix.setCell(0, 0, 1);
-        iInvertableMatrix.setCell(0, 1, 2);
-        iInvertableMatrix.setCell(1, 0, 3);
-        iInvertableMatrix.setCell(1, 1, 2);
-        Assert.assertEquals(iInvertableMatrix.getCell(1,0), 3, 0.001);
+        InvertableMatrix iInvertableMatrix = new InvertableMatrix(new Matrix(new double[]{1.0,2.0,3.0,4.0}));
+//        assertEquals(iInvertableMatrix.getCell(1,0), 0, 0.001);
+//        assertEquals(iInvertableMatrix.getCell(1,0), 3, 0.001);
 
 
         System.out.println("\nThe input matrix");
         System.out.println(iInvertableMatrix);
 
         System.out.println("\nObratnaya matrica:");
-        Assert.assertEquals(iInvertableMatrix.getCell(0,0), 1, 0.001);
-        Assert.assertTrue(iInvertableMatrix.calculateMatrixInverse());
-        System.out.println(iInvertableMatrix);
-       // Assert.assertEquals(iInvertableMatrix.getCellNew(0,0), -0.5, 0.001);
+        IInvertableMatrix iInvertableMatrixNew = iInvertableMatrix.calculateMatrixInverse();
+        Assert.assertTrue(iInvertableMatrixNew != null);
+        InvertableMatrix multiply = new InvertableMatrix(iInvertableMatrix.mult(iInvertableMatrixNew));
+        System.out.println(iInvertableMatrixNew);
+        assertEquals(new InvertableMatrix(multiply.getSize()), multiply);
+
+        assertEquals(iInvertableMatrixNew.getCell(0,0), -0.5, 0.001);
     }
 
 }
