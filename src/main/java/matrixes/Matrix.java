@@ -162,4 +162,18 @@ public class Matrix implements IMatrix {
         result = 31 * result + Arrays.hashCode(matrix);
         return result;
     }
+
+    public Matrix mult(IMatrix matr) throws MatrixOutOfBoundException {
+        Matrix res = new Matrix(size);
+        for (int i=0; i< size; i++) {
+            for(int j=0; j<size; j++) {
+                double temp = 0;
+                for(int k = 0; k < size; k++) {
+                    temp+=this.getCell(i,k) * matr.getCell(k,j);
+                }
+                res.setCell(i,j, temp);
+            }
+        }
+        return res;
+    }
 }

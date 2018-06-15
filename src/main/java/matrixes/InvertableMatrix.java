@@ -6,7 +6,7 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
 
     public InvertableMatrix(int size) throws MatrixOutOfBoundException {
         super(size);
-        for (int i = 0; i < size*size; i++) {
+        for (int i = 0; i < size; i++) {
             super.setCell(i,i,1.);
         }
     }
@@ -17,29 +17,17 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
             throw new MyMatrixException("det == 0");
         }
     }
-//    private double getCellNew(int x, int y) {
-//        return matrix[x * size * 2 + y + size];
-//    }
-
-    @Override
-    public void setCell(int x, int y, double value) throws MatrixOutOfBoundException {
-        double temp = getCell(x,y);
-        super.setCell(x,y,value);
-        if (Math.abs(getDeterminant())<1e-6) {
-            super.setCell(x, y, temp);
-        } else {
-            super.setCell(x, y, value);
-        }
-    }
 
     // izmenyaem soderjimoe v stroke (iz stroki X vychislyaetsya stroka Y * na soderjimoe yacheyki [X, Y])
-    private void subtractionRow(int x, int y) throws MatrixOutOfBoundException {
+    private void subtractionRow(int x, int y, InvertableMatrix unit) throws MatrixOutOfBoundException {
         int size = getSize();
         if (getCell(x, y) != 0) {
             double kf = getCell(x, y) * -1;
             // setCell(x, y, 0);
-            for (int k = y; k < size * 2; k++)
+            for (int k = y; k < size; k++)
                 setCell(x, k, getCell(x, k) + getCell(y, k) * kf);
+            for (int k = 0; k < size; k++)
+                unit.setCell(x, k, unit.getCell(x, k) + unit.getCell(y, k) * kf);
             System.out.println("Row " + (x + 1) + " += Row " + (y + 1) + " * " + kf);
 //            outMatrix();
         }
@@ -85,52 +73,25 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
             }
 
             // na osnovnoy diagonali delaem 1
-            double divider = getCell(i, i);
+            double divider = my.getCell(i, i);
             if (divider != 1) {
-                for (int j = 0; j < getSize() * 2; j++)
-                    setCell(i, j, getCell(i, j) / divider);
+                for (int j = 0; j < getSize(); j++) {
+                    my.setCell(i, j, my.getCell(i, j) / divider);
+                    unit.setCell(i, j, unit.getCell(i, j) / divider);
+                }
 //			setCell(i, i, 1);
                 System.out.println("Row " + (i + 1) + " /= " + divider);
 //                outMatrix();
             }
-            for (int j = i + 1; j < getSize(); j++)
-                subtractionRow(j, i);
+            for (int j = i + 1; j < getSize(); j++) {
+                my.subtractionRow(j, i, unit);
+            }
         }
         for (int i = getSize() - 1; i > 0; i--) {
             for (int j = i - 1; j >= 0; j--) {
-                subtractionRow(j, i);
+                my.subtractionRow(j, i, unit);
             }
         }
         return unit;
     }
-
-    @Override
-    public String toString() {
-        int size = getSize();
-        StringBuilder sb = new StringBuilder();
-        try {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++)
-                    sb.append(getCell(i, j)).append("\t");
-                sb.append("\t|\t\t");
-                for (int j = size; j < size * 2; j++)
-                    sb.append(getCell(i, j)).append("\t");
-                sb.append("\n");
-            }
-        } catch (MatrixOutOfBoundException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
-//    @Override
-//    public void outMatrix() {
-//        for (int i = 0; i < size; i++) {
-//            for (int j = 0; j < size; j++)
-//                System.out.print(getCell(i, j) + "\t");
-//            System.out.print("\t|\t\t");
-//            for (int j = size; j < size * 2; j++)
-//                System.out.print(getCell(i, j) + "\t");
-//            System.out.println();
-//        }
-//    }
 }
