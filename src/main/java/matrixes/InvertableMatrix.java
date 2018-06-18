@@ -13,7 +13,7 @@ public class InvertableMatrix extends Matrix implements IInvertableMatrix {
 
     public InvertableMatrix (Matrix matrix) throws MyMatrixException {
         super(matrix);
-        if (Math.abs(matrix.getDeterminant())<1e-7) {
+        if (Math.abs(new Matrix(matrix).getDeterminant())<1e-7) {
             throw new MyMatrixException("det == 0");
         }
     }

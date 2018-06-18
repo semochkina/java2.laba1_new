@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 public class Matrix implements IMatrix {
 
+    private static final double DELTA = 0.000001;
     private boolean flagCache = false;
     private double memDeterminant;
     // Размерность матрицы
@@ -52,8 +53,15 @@ public class Matrix implements IMatrix {
         if (x < 0 || y < 0 || x>=size || y>=size) {
             throw new MatrixOutOfBoundException();
         }
-        matrix[x * size + y] = value;
+        matrix[x * size + y] = getDouble(value);
         flagCache = false;
+    }
+
+    public static double getDouble(double value) {
+        // округляем до целого значения
+        long l = Math.round(value);
+        // если близко к целому значению - берем целое иначе входное значение
+        return (l - DELTA < value && value < l + DELTA) ? l : value;
     }
 
     // perestavlyaem stroki matrica

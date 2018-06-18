@@ -42,7 +42,7 @@ public class InvertableMatrixTest {
         System.out.println(iInvertableMatrixNew);
         assertEquals(new InvertableMatrix(multiply.getSize()), multiply);
 
-        assertEquals(iInvertableMatrixNew.getCell(0,0), -0.5, 0.001);
+        assertEquals(iInvertableMatrixNew.getCell(0,0), -2, 0.001);
     }
 
 }
